@@ -5,19 +5,21 @@ import PptxGenJS from 'pptxgenjs';
 // Styles
 import "./style.css"
 
-const markdown = /** @type HTMLTextAreaElement */ (document.getElementById('markdown'))!;
-const status = document.getElementById('status')!;
+const markdown = document.getElementById('markdown') as HTMLTextAreaElement | null;
+const status = document.getElementById('status') as HTMLElement | null;
 
-document.getElementById('generate')?.addEventListener('click', () => {
-  //@ts-ignore for now
-  generatePPT(markdown.value);
-});
+if (markdown && status) {
+  document.getElementById('generate')?.addEventListener('click', () => {
+    generatePPT(markdown.value);
+  });
+}
 
 async function generatePPT(markdownContent: string) {
   const pptx = new PptxGenJS();
   const slidesContent = markdownContent.split('---');
 
-  slidesContent.forEach(async content => {
+  // Use for...of loop to properly await async operations
+  for (const content of slidesContent) {
     const slide = pptx.addSlide();
     const parsedMarkdown = await marked(content.trim());
     const tempDiv = document.createElement('div');
@@ -25,7 +27,8 @@ async function generatePPT(markdownContent: string) {
 
     let y = 1; // Y position for text elements
 
-    Array.from(tempDiv.childNodes).forEach(node => {
+    // Iterate through the child nodes of the parsed markdown
+    for (const node of tempDiv.childNodes) {
       if (node.nodeName === 'H1') {
         slide.addText(node.textContent ?? "", { x: 1, y: y, fontSize: 24 });
         y += 1;
@@ -36,18 +39,23 @@ async function generatePPT(markdownContent: string) {
         slide.addText(node.textContent ?? "", { x: 1, y: y, fontSize: 16 });
         y += 0.5;
       } else if (node.nodeName === 'UL') {
-        node.childNodes.forEach(li => {
-          slide.addText(`• ${li.textContent}`, { x: 1, y: y, fontSize: 16 });
-          y += 0.5;
-        });
+        // Handle unordered lists
+        for (const li of node.childNodes) {
+          if (li.nodeName === 'LI') {
+            slide.addText(`• ${li.textContent ?? ""}`, { x: 1, y: y, fontSize: 16 });
+            y += 0.5;
+          }
+        }
       }
-    });
-  });
+    }
+  }
 
-  pptx.writeFile({ fileName: 'presentation.pptx' }).then(() => {
-    status.textContent = 'Presentation generated!';
-  }).catch(err => {
-    status.textContent = 'Error generating presentation.';
+  // Generate the PowerPoint file
+  try {
+    await pptx.writeFile({ fileName: 'presentation.pptx' });
+    if (status) status.textContent = 'Presentation generated!';
+  } catch (err) {
+    if (status) status.textContent = 'Error generating presentation.';
     console.error(err);
-  });
+  }
 }
