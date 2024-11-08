@@ -5,6 +5,12 @@
   box-sizing: border-box;
 }
 
+:root {
+  --font-size-sm: 0.8rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+}
+
 /* Body Styles */
 body {
   font-family: 'Arial', sans-serif;
@@ -101,4 +107,16 @@ main {
 /* Add some space between sections */
 section {
   margin-bottom: 20px;
+}
+
+.font-size-sm {
+  font-size: var(--font-size-sm);
+}
+
+.font-size-md {
+  font-size: var(--font-size-sm);
+}
+
+.font-size-lg {
+  font-size: var(--font-size-sm);
 }
