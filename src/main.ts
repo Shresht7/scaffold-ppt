@@ -5,14 +5,20 @@ import PptxGenJS from 'pptxgenjs';
 // Styles
 import "./style.css"
 
+const btnGenerate = document.getElementById('generate') as HTMLButtonElement | null;
 const markdown = document.getElementById('markdown') as HTMLTextAreaElement | null;
 const status = document.getElementById('status') as HTMLElement | null;
 
 if (markdown && status) {
-  document.getElementById('generate')?.addEventListener('click', () => {
+  btnGenerate?.addEventListener('click', () => {
     generatePPT(markdown.value);
   });
 }
+
+markdown?.addEventListener('input', () => {
+  btnGenerate!.disabled = !(markdown.value !== "");
+  console.log(btnGenerate!.disabled)
+})
 
 async function generatePPT(markdownContent: string) {
   const pptx = new PptxGenJS();

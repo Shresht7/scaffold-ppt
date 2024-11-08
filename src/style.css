@@ -78,6 +78,12 @@ button:hover {
   background-color: #375a8c;
 }
 
+button:disabled {
+  background-color: #333;
+  opacity: 0.33;
+  cursor: not-allowed;
+}
+
 body,
 main {
   display: flex;
