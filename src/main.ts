@@ -1,5 +1,9 @@
+// Library
 import { marked } from 'marked';
 import PptxGenJS from 'pptxgenjs';
+
+// Styles
+import "./style.css"
 
 const markdown = /** @type HTMLTextAreaElement */ (document.getElementById('markdown'))!;
 const status = document.getElementById('status')!;
